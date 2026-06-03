@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d3" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d2" for="node" attr.name="date" attr.type="string" />
+  <key id="d1" for="node" attr.name="type" attr.type="string" />
+  <key id="d0" for="node" attr.name="label" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="Condition/1">
+      <data key="d0">Colorectal cancer diagnosed (C18.9)</data>
+      <data key="d1">Condition</data>
+      <data key="d2">2023-03-15 00:00:00</data>
+    </node>
+    <node id="Encounter/1">
+      <data key="d0">Initial oncology consult</data>
+      <data key="d1">Encounter</data>
+      <data key="d2">2023-03-17 00:00:00</data>
+    </node>
+    <node id="Procedure/1">
+      <data key="d0">Colonoscopy with biopsy</data>
+      <data key="d1">Procedure</data>
+      <data key="d2">2023-03-29 00:00:00</data>
+    </node>
+    <node id="Procedure/2">
+      <data key="d0">Partial colectomy</data>
+      <data key="d1">Procedure</data>
+      <data key="d2">2023-04-29 00:00:00</data>
+    </node>
+    <node id="MedicationAdministration/1">
+      <data key="d0">FOLFOX chemotherapy cycle 1</data>
+      <data key="d1">MedicationAdministration</data>
+      <data key="d2">2023-05-14 00:00:00</data>
+    </node>
+    <node id="Observation/1">
+      <data key="d0">CEA tumor marker 2.1 ng/mL</data>
+      <data key="d1">Observation</data>
+      <data key="d2">2023-06-13 00:00:00</data>
+    </node>
+    <edge source="Condition/1" target="Encounter/1">
+      <data key="d3">hasNextEvent</data>
+    </edge>
+    <edge source="Encounter/1" target="Procedure/1">
+      <data key="d3">hasNextEvent</data>
+    </edge>
+    <edge source="Procedure/1" target="Procedure/2">
+      <data key="d3">hasNextEvent</data>
+    </edge>
+    <edge source="Procedure/2" target="MedicationAdministration/1">
+      <data key="d3">hasNextEvent</data>
+    </edge>
+    <edge source="MedicationAdministration/1" target="Observation/1">
+      <data key="d3">hasNextEvent</data>
+    </edge>
+  </graph>
+</graphml>
