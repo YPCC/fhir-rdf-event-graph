@@ -1,0 +1,171 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix timeline: <http://example.org/timeline/> .
+@prefix mcode: <http://hl7.org/fhir/us/mcode/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# ============================================
+# ENHANCED SHACL VALIDATION FOR PATIENT EVENT GRAPH
+# Colorectal Cancer Focus + mCODE Alignment
+# ============================================
+
+# ----------------------------------------
+# PATIENT SHAPE (Enhanced)
+# ----------------------------------------
+fhir:PatientShape
+    a sh:NodeShape ;
+    sh:targetClass fhir:Patient ;
+    sh:closed false ;
+    sh:ignoredProperties ( fhir:text ) ;
+    
+    sh:property [
+        sh:path fhir:id ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Patient must have an ID" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:name ;
+        sh:minCount 1 ;
+        sh:message "Patient must have at least one name" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:gender ;
+        sh:in ( "male" "female" "other" "unknown" ) ;
+        sh:message "Gender must be male, female, other or unknown" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:birthDate ;
+        sh:datatype xsd:date ;
+        sh:message "Birth date must be a valid date" ;
+    ] .
+
+# ----------------------------------------
+# CANCER CONDITION SHAPE (mCODE Enhanced)
+# ----------------------------------------
+fhir:CancerConditionShape
+    a sh:NodeShape ;
+    sh:targetClass fhir:Condition ;
+    
+    sh:property [
+        sh:path fhir:code ;
+        sh:minCount 1 ;
+        sh:message "Condition must have a code" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:subject ;
+        sh:minCount 1 ;
+        sh:class fhir:Patient ;
+        sh:message "Condition must reference a Patient" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:clinicalStatus ;
+        sh:minCount 1 ;
+        sh:message "Clinical status is required" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:onset ;
+        sh:minCount 1 ;
+        sh:message "Onset date/period is required for cancer conditions" ;
+    ] ;
+    
+    # Severity for cancer staging
+    sh:property [
+        sh:path fhir:severity ;
+        sh:maxCount 1 ;
+        sh:message "Severity should be specified for cancer" ;
+    ] .
+
+# ----------------------------------------
+# CLINICAL EVENT SHAPE (Encounter, Procedure, etc.)
+# ----------------------------------------
+fhir:ClinicalEventShape
+    a sh:NodeShape ;
+    sh:targetClass fhir:Encounter, fhir:Procedure, fhir:MedicationAdministration, fhir:Observation ;
+    
+    sh:property [
+        sh:path fhir:subject ;
+        sh:minCount 1 ;
+        sh:class fhir:Patient ;
+        sh:message "Clinical event must reference a Patient" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:effective ;
+        sh:minCount 1 ;
+        sh:message "Effective date/time is required for clinical events" ;
+    ] .
+
+# ----------------------------------------
+# TIMELINE SEQUENCING SHAPE
+# ----------------------------------------
+timeline:EventShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf timeline:hasNextEvent ;
+    
+    sh:property [
+        sh:path timeline:hasNextEvent ;
+        sh:maxCount 1 ;
+        sh:class fhir:DomainResource ;
+        sh:message "hasNextEvent must point to another clinical resource" ;
+    ] .
+
+# ----------------------------------------
+# EVENT GRAPH INTEGRITY
+# ----------------------------------------
+timeline:EventGraphShape
+    a sh:NodeShape ;
+    sh:targetClass fhir:Condition ;
+    
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:select """
+            SELECT $this ?event WHERE {
+                $this timeline:hasNextEvent* ?event .
+                FILTER NOT EXISTS { ?event a fhir:DomainResource }
+            }
+        """ ;
+        sh:message "Event graph contains invalid references" ;
+    ] .
+
+# ----------------------------------------
+# COLORECTAL CANCER SPECIFIC RULES
+# ----------------------------------------
+:ColorectalCancerShape
+    a sh:NodeShape ;
+    sh:targetClass mcode:CancerCondition ;
+    
+    sh:property [
+        sh:path fhir:code ;
+        sh:minCount 1 ;
+        sh:pattern "363406005|colorectal|colon" ;
+        sh:message "Must be a colorectal cancer condition (SNOMED 363406005 or similar)" ;
+    ] ;
+    
+    sh:property [
+        sh:path fhir:stage ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message "Cancer stage is recommended" ;
+    ] .
+
+# ----------------------------------------
+# METADATA & DOCUMENTATION
+# ----------------------------------------
+<> rdfs:label "Patient Event Graph SHACL Validation Rules" ;
+   rdfs:comment "Enhanced SHACL shapes for validating colorectal cancer patient event graphs in FHIR RDF" ;
+   sh:declare [
+       sh:prefix "fhir" ;
+       sh:namespace "http://hl7.org/fhir/"^^xsd:anyURI ;
+   ] ;
+   sh:declare [
+       sh:prefix "timeline" ;
+       sh:namespace "http://example.org/timeline/"^^xsd:anyURI ;
+   ] .

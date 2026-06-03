@@ -1,0 +1,26 @@
+# Core
+rdflib>=7.0.0
+requests>=2.31.0
+fhir.resources>=7.0.0
+pandas>=2.0.0
+python-dateutil>=2.8.0
+
+# Visualization
+plotly>=5.18.0
+matplotlib>=3.8.0
+imageio>=2.31.0
+pillow>=10.0.0
+
+# Graph & Validation
+networkx>=3.2.0
+pyshacl>=0.25.0               # SHACL validation
+owlrl>=6.0.0                  # OWL reasoning (optional)
+
+# Web / Docker
+streamlit>=1.35.0
+tqdm>=4.66.0
+
+# Dev / Notebook
+jupyter>=1.0.0
+ipykernel>=6.0.0
+fhirtordf                     # Official FHIR to RDF (recommended)

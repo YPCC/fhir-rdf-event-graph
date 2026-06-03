@@ -1,0 +1,169 @@
+{
+  "resourceType": "Bundle",
+  "id": "synthea-colorectal-001",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "synthea-colorectal-001",
+        "name": [
+          {
+            "use": "official",
+            "family": "Martinez",
+            "given": ["Carlos", "Eduardo"]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1958-07-22",
+        "address": [
+          {
+            "use": "home",
+            "city": "Boston",
+            "state": "MA",
+            "postalCode": "02115"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-colorectal-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "363406005",
+              "display": "Malignant tumor of colon"
+            }
+          ],
+          "text": "Colorectal adenocarcinoma, stage IIIB"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "onsetDateTime": "2023-03-15T10:30:00Z"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-initial-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "period": {
+          "start": "2023-03-17T09:00:00Z"
+        },
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "reasonReference": [
+          {
+            "reference": "Condition/cond-colorectal-001"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "proc-colonoscopy-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "73761001",
+              "display": "Colonoscopy"
+            }
+          ]
+        },
+        "performedPeriod": {
+          "start": "2023-03-29T08:15:00Z",
+          "end": "2023-03-29T09:45:00Z"
+        },
+        "reasonReference": [
+          {
+            "reference": "Condition/cond-colorectal-001"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "proc-colectomy-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "80146002",
+              "display": "Partial colectomy"
+            }
+          ]
+        },
+        "performedPeriod": {
+          "start": "2023-05-02T07:00:00Z",
+          "end": "2023-05-02T11:30:00Z"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "id": "med-folfox-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "medicationCodeableConcept": {
+          "text": "FOLFOX chemotherapy regimen"
+        },
+        "effectivePeriod": {
+          "start": "2023-05-20T10:00:00Z"
+        },
+        "dosage": {
+          "text": "Cycle 1 of 12"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-cea-001",
+        "subject": {
+          "reference": "Patient/synthea-colorectal-001"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2039-6",
+              "display": "Carcinoembryonic antigen [Mass/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "valueQuantity": {
+          "value": 2.1,
+          "unit": "ng/mL"
+        },
+        "effectiveDateTime": "2023-06-15T14:20:00Z"
+      }
+    }
+  ]
+}

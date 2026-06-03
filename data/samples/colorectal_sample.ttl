@@ -1,0 +1,57 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix timeline: <http://example.org/timeline/> .
+
+<http://hl7.org/fhir/Patient/colorectal-001> a fhir:Patient ;
+    fhir:id "colorectal-001" ;
+    fhir:name [ a fhir:HumanName ; fhir:family "Rivera" ; fhir:given "Maria" ] ;
+    fhir:gender "female" ;
+    fhir:birthDate "1968-04-12"^^xsd:date .
+
+<http://hl7.org/fhir/Condition/colorectal-001-cond> a fhir:Condition ;
+    fhir:id "colorectal-001-cond" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ a fhir:Coding ;
+                              fhir:system "http://snomed.info/sct" ;
+                              fhir:code "363406005" ;
+                              fhir:display "Malignant tumor of colon" ] ;
+                fhir:text "Colorectal adenocarcinoma, stage III" ] ;
+    fhir:effective [ a fhir:Period ;
+                     fhir:start "2023-03-15"^^xsd:date ] ;
+    fhir:clinicalStatus [ a fhir:CodeableConcept ; fhir:text "active" ] .
+
+<http://hl7.org/fhir/Encounter/colorectal-001-enc1> a fhir:Encounter ;
+    fhir:id "colorectal-001-enc1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-001> ;
+    fhir:period [ a fhir:Period ; fhir:start "2023-03-17"^^xsd:date ] ;
+    fhir:reasonReference <http://hl7.org/fhir/Condition/colorectal-001-cond> ;
+    fhir:class [ a fhir:Coding ; fhir:code "AMB" ; fhir:display "ambulatory" ] .
+
+<http://hl7.org/fhir/Procedure/colorectal-001-proc1> a fhir:Procedure ;
+    fhir:id "colorectal-001-proc1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ fhir:system "http://snomed.info/sct" ; fhir:code "73761001" ; fhir:display "Colonoscopy" ] ] ;
+    fhir:performed [ a fhir:Period ; fhir:start "2023-03-29"^^xsd:date ] ;
+    fhir:reasonReference <http://hl7.org/fhir/Condition/colorectal-001-cond> .
+
+<http://hl7.org/fhir/Procedure/colorectal-001-proc2> a fhir:Procedure ;
+    fhir:id "colorectal-001-proc2" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ fhir:system "http://snomed.info/sct" ; fhir:code "80146002" ; fhir:display "Partial colectomy" ] ] ;
+    fhir:performed [ a fhir:Period ; fhir:start "2023-05-02"^^xsd:date ] .
+
+<http://hl7.org/fhir/MedicationAdministration/colorectal-001-med1> a fhir:MedicationAdministration ;
+    fhir:id "colorectal-001-med1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-001> ;
+    fhir:medication [ a fhir:CodeableConcept ; fhir:text "FOLFOX chemotherapy" ] ;
+    fhir:effective [ a fhir:Period ; fhir:start "2023-05-20"^^xsd:date ] .
+
+# Timeline sequencing (enriched)
+<http://hl7.org/fhir/Condition/colorectal-001-cond> timeline:hasNextEvent <http://hl7.org/fhir/Encounter/colorectal-001-enc1> .
+<http://hl7.org/fhir/Encounter/colorectal-001-enc1> timeline:hasNextEvent <http://hl7.org/fhir/Procedure/colorectal-001-proc1> .
+<http://hl7.org/fhir/Procedure/colorectal-001-proc1> timeline:hasNextEvent <http://hl7.org/fhir/Procedure/colorectal-001-proc2> .
+<http://hl7.org/fhir/Procedure/colorectal-001-proc2> timeline:hasNextEvent <http://hl7.org/fhir/MedicationAdministration/colorectal-001-med1> .

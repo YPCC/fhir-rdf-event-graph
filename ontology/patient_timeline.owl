@@ -1,0 +1,51 @@
+@prefix : <http://example.org/patient-timeline#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix timeline: <http://example.org/timeline/> .
+
+:PatientTimelineOntology a owl:Ontology ;
+    rdfs:label "Patient Event Timeline Ontology" ;
+    rdfs:comment "Custom OWL ontology extending FHIR RDF for colorectal cancer patient journeys" .
+
+# Classes
+:ClinicalEvent a owl:Class ;
+    rdfs:subClassOf fhir:DomainResource ;
+    rdfs:label "Clinical Event" .
+
+:PatientJourney a owl:Class ;
+    rdfs:label "Patient Journey" ;
+    rdfs:comment "Sequence of clinical events for a single patient" .
+
+# Properties
+:hasNextEvent a owl:ObjectProperty ;
+    rdfs:domain :ClinicalEvent ;
+    rdfs:range :ClinicalEvent ;
+    rdfs:label "has next event" ;
+    rdfs:comment "Links events in chronological order" .
+
+:hasPreviousEvent a owl:ObjectProperty ;
+    owl:inverseOf :hasNextEvent .
+
+:partOfJourney a owl:ObjectProperty ;
+    rdfs:domain :ClinicalEvent ;
+    rdfs:range :PatientJourney .
+
+# Colorectal-specific
+:ColorectalCancerDiagnosis a owl:Class ;
+    rdfs:subClassOf fhir:Condition ;
+    rdfs:label "Colorectal Cancer Diagnosis" .
+
+:ChemotherapyCycle a owl:Class ;
+    rdfs:subClassOf fhir:MedicationAdministration ;
+    rdfs:label "Chemotherapy Cycle" .
+
+# Temporal reasoning
+:before a owl:ObjectProperty ;
+    rdfs:domain :ClinicalEvent ;
+    rdfs:range :ClinicalEvent .
+
+:after a owl:ObjectProperty ;
+    owl:inverseOf :before .

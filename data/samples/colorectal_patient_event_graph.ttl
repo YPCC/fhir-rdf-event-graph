@@ -1,0 +1,115 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix timeline: <http://example.org/timeline/> .
+@prefix mcode: <http://hl7.org/fhir/us/mcode/> .
+
+# ============================================
+# COLORECTAL CANCER PATIENT EVENT GRAPH
+# Realistic FHIR RDF Sample for Demonstration
+# ============================================
+
+# Patient
+<http://hl7.org/fhir/Patient/colorectal-demo-001> a fhir:Patient ;
+    fhir:id "colorectal-demo-001" ;
+    fhir:name [ a fhir:HumanName ; fhir:family "Martinez" ; fhir:given "Carlos" ] ;
+    fhir:gender "male" ;
+    fhir:birthDate "1958-07-22"^^xsd:date ;
+    rdfs:label "Carlos Martinez - Colorectal Cancer Patient" .
+
+# Primary Cancer Condition (mCODE aligned)
+<http://hl7.org/fhir/Condition/colorectal-demo-001-cond> a fhir:Condition, mcode:CancerCondition ;
+    fhir:id "colorectal-demo-001-cond" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ a fhir:Coding ;
+                              fhir:system "http://snomed.info/sct" ;
+                              fhir:code "363406005" ;
+                              fhir:display "Malignant tumor of colon" ] ;
+                fhir:text "Colorectal adenocarcinoma, stage IIIB" ] ;
+    fhir:clinicalStatus [ a fhir:CodeableConcept ; fhir:text "active" ] ;
+    fhir:onset [ a fhir:Period ; fhir:start "2023-03-15"^^xsd:date ] ;
+    rdfs:label "Primary Colorectal Cancer Diagnosis" .
+
+# Timeline Event 1: Initial Oncology Consult
+<http://hl7.org/fhir/Encounter/colorectal-demo-enc1> a fhir:Encounter ;
+    fhir:id "colorectal-demo-enc1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:period [ a fhir:Period ; fhir:start "2023-03-17"^^xsd:date ] ;
+    fhir:reasonReference <http://hl7.org/fhir/Condition/colorectal-demo-001-cond> ;
+    fhir:class [ a fhir:Coding ; fhir:code "AMB" ; fhir:display "ambulatory" ] ;
+    rdfs:label "Initial Oncology Consult" .
+
+# Timeline Event 2: Colonoscopy
+<http://hl7.org/fhir/Procedure/colorectal-demo-proc1> a fhir:Procedure ;
+    fhir:id "colorectal-demo-proc1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ fhir:system "http://snomed.info/sct" ; fhir:code "73761001" ; fhir:display "Colonoscopy with biopsy" ] ] ;
+    fhir:performed [ a fhir:Period ; fhir:start "2023-03-29"^^xsd:date ] ;
+    fhir:reasonReference <http://hl7.org/fhir/Condition/colorectal-demo-001-cond> ;
+    rdfs:label "Colonoscopy with Biopsy" .
+
+# Timeline Event 3: Partial Colectomy (Surgery)
+<http://hl7.org/fhir/Procedure/colorectal-demo-proc2> a fhir:Procedure ;
+    fhir:id "colorectal-demo-proc2" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ fhir:system "http://snomed.info/sct" ; fhir:code "80146002" ; fhir:display "Partial colectomy" ] ] ;
+    fhir:performed [ a fhir:Period ; fhir:start "2023-05-02"^^xsd:date ] ;
+    rdfs:label "Partial Colectomy Surgery" .
+
+# Timeline Event 4: FOLFOX Chemotherapy
+<http://hl7.org/fhir/MedicationAdministration/colorectal-demo-med1> a fhir:MedicationAdministration ;
+    fhir:id "colorectal-demo-med1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:medication [ a fhir:CodeableConcept ; fhir:text "FOLFOX chemotherapy regimen - Cycle 1" ] ;
+    fhir:effective [ a fhir:Period ; fhir:start "2023-05-20"^^xsd:date ] ;
+    rdfs:label "FOLFOX Chemotherapy Cycle 1" .
+
+# Timeline Event 5: CEA Tumor Marker Observation
+<http://hl7.org/fhir/Observation/colorectal-demo-obs1> a fhir:Observation ;
+    fhir:id "colorectal-demo-obs1" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:code [ a fhir:CodeableConcept ;
+                fhir:coding [ fhir:system "http://loinc.org" ; fhir:code "2039-6" ; fhir:display "Carcinoembryonic antigen [Mass/volume]" ] ] ;
+    fhir:value [ a fhir:Quantity ; fhir:value "2.1"^^xsd:decimal ; fhir:unit "ng/mL" ] ;
+    fhir:effective [ a fhir:Period ; fhir:start "2023-06-15"^^xsd:date ] ;
+    rdfs:label "CEA Tumor Marker - 2.1 ng/mL (Normal)" .
+
+# Timeline Event 6: Follow-up Oncology Visit
+<http://hl7.org/fhir/Encounter/colorectal-demo-enc2> a fhir:Encounter ;
+    fhir:id "colorectal-demo-enc2" ;
+    fhir:subject <http://hl7.org/fhir/Patient/colorectal-demo-001> ;
+    fhir:period [ a fhir:Period ; fhir:start "2023-07-10"^^xsd:date ] ;
+    fhir:reasonReference <http://hl7.org/fhir/Condition/colorectal-demo-001-cond> ;
+    rdfs:label "Follow-up Oncology Visit" .
+
+# ============================================
+# TEMPORAL EVENT GRAPH LINKS
+# ============================================
+
+<http://hl7.org/fhir/Condition/colorectal-demo-001-cond> 
+    timeline:hasNextEvent <http://hl7.org/fhir/Encounter/colorectal-demo-enc1> .
+
+<http://hl7.org/fhir/Encounter/colorectal-demo-enc1> 
+    timeline:hasNextEvent <http://hl7.org/fhir/Procedure/colorectal-demo-proc1> .
+
+<http://hl7.org/fhir/Procedure/colorectal-demo-proc1> 
+    timeline:hasNextEvent <http://hl7.org/fhir/Procedure/colorectal-demo-proc2> .
+
+<http://hl7.org/fhir/Procedure/colorectal-demo-proc2> 
+    timeline:hasNextEvent <http://hl7.org/fhir/MedicationAdministration/colorectal-demo-med1> .
+
+<http://hl7.org/fhir/MedicationAdministration/colorectal-demo-med1> 
+    timeline:hasNextEvent <http://hl7.org/fhir/Observation/colorectal-demo-obs1> .
+
+<http://hl7.org/fhir/Observation/colorectal-demo-obs1> 
+    timeline:hasNextEvent <http://hl7.org/fhir/Encounter/colorectal-demo-enc2> .
+
+# ============================================
+# METADATA
+# ============================================
+
+<http://hl7.org/fhir/Patient/colorectal-demo-001> 
+    rdfs:comment "Sample colorectal cancer patient event graph for demonstration purposes. Generated for FHIR-RDF POC." .

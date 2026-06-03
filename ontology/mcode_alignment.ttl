@@ -1,0 +1,50 @@
+@prefix : <http://example.org/mcode-alignment#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix mcode: <http://hl7.org/fhir/us/mcode/> .
+
+# mCODE Alignment Ontology for Colorectal Cancer
+:MCODEAlignment a owl:Ontology ;
+    rdfs:label "mCODE Alignment for FHIR-RDF Patient Graphs" ;
+    rdfs:comment "Maps standard FHIR resources to mCODE profiles for oncology interoperability" .
+
+# mCODE Core Profiles
+mcode:CancerPatient a owl:Class ;
+    rdfs:subClassOf fhir:Patient ;
+    rdfs:label "mCODE Cancer Patient" .
+
+mcode:CancerCondition a owl:Class ;
+    rdfs:subClassOf fhir:Condition ;
+    rdfs:label "Primary Cancer Condition (mCODE)" .
+
+mcode:CancerStage a owl:Class ;
+    rdfs:subClassOf fhir:Observation ;
+    rdfs:label "Cancer Stage Group (mCODE)" .
+
+mcode:TumorMarker a owl:Class ;
+    rdfs:subClassOf fhir:Observation ;
+    rdfs:label "Tumor Marker (mCODE)" .
+
+# Colorectal-specific mCODE mappings
+:ColorectalAdenocarcinoma a owl:Class ;
+    rdfs:subClassOf mcode:CancerCondition ;
+    rdfs:label "Colorectal Adenocarcinoma" .
+
+:KRASMutation a owl:Class ;
+    rdfs:subClassOf mcode:TumorMarker ;
+    rdfs:label "KRAS Mutation Status" .
+
+:BRAFMutation a owl:Class ;
+    rdfs:subClassOf mcode:TumorMarker ;
+    rdfs:label "BRAF Mutation Status" .
+
+# Alignment rules (example)
+:alignsToMCODE a owl:ObjectProperty ;
+    rdfs:domain fhir:Condition ;
+    rdfs:range mcode:CancerCondition .
+
+# Example mapping for our colorectal sample
+<http://hl7.org/fhir/Condition/colorectal-001-cond> 
+    :alignsToMCODE mcode:CancerCondition ;
+    a :ColorectalAdenocarcinoma .

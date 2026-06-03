@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  graphdb:
+    image: ontotext/graphdb:10.7.0-free
+    container_name: graphdb
+    ports:
+      - "7200:7200"
+    volumes:
+      - graphdb-data:/opt/graphdb/home
+    environment:
+      - GRAPHDB_HOME=/opt/graphdb/home
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7200/rest/repositories"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  streamlit-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: fhir-rdf-streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    depends_on:
+      graphdb:
+        condition: service_healthy
+    environment:
+      - GRAPHDB_URL=http://graphdb:7200
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  graphdb-data:
